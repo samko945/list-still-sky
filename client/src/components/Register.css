@@ -1,0 +1,12 @@
+form {
+	max-width: 30ch;
+	margin: 0 auto;
+}
+
+.form-item {
+	margin: 1.5rem 0;
+}
+
+.form-input {
+	width: 100%;
+}

@@ -7,6 +7,7 @@ const passport = require("passport");
 
 const app = express();
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
@@ -50,7 +51,7 @@ app.post("/register", function (req, res) {
 	});
 });
 
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, function () {
 	console.log(`Listening on port ${PORT}...`);
 });
