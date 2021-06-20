@@ -2,10 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 const passport = require("passport");
-// const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
+const sessionStore = new MongoDBStore({
+	uri: `mongodb+srv://admin:${process.env.MDB_USER_PW}@cluster0.2rwdu.mongodb.net/firstDB`,
+	collection: "sessions",
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -13,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
 	session({
 		secret: process.env.SESSION_SECRET,
+		store: sessionStore,
 		resave: false,
 		saveUninitialized: false,
 	})
@@ -30,6 +35,13 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.post("/login", function (req, res) {
+	passport.authenticate("local")(req, res, function () {
+		console.log(req.user, "logged in");
+		res.json(req.user);
+	});
+});
+
 app.post("/register", function (req, res) {
 	const newUser = {
 		email: req.body.email,
@@ -44,11 +56,30 @@ app.post("/register", function (req, res) {
 				if (err) {
 					console.log(err);
 				} else {
-					res.redirect("/");
+					console.log(req.user, "logged in via register");
+					res.json(req.user);
 				}
 			});
 		}
 	});
+});
+
+app.get("/logout", function (req, res) {
+	console.log(req.user, "logging out");
+	req.logout();
+	if (req.user === null) {
+		console.log("successfully logged out");
+	}
+	res.redirect("/");
+});
+
+app.get("/user", function (req, res) {
+	console.log(req.user);
+	if (req.isAuthenticated()) {
+		res.json({ email: req.user.email, authenticated: true });
+	} else {
+		res.json({ authenticated: false });
+	}
 });
 
 const PORT = process.env.PORT || 8080;
