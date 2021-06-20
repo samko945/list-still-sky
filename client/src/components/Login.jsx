@@ -22,9 +22,9 @@ export default function Login(props) {
 		});
 		const data = await response.json(response);
 		if (data._id) {
-			props.updateIsLoggedIn(true);
+			props.setIsLoggedIn(true);
 		} else {
-			props.updateIsLoggedIn(false);
+			props.setIsLoggedIn(false);
 		}
 	}
 	return (

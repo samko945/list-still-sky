@@ -68,17 +68,17 @@ app.get("/logout", function (req, res) {
 	console.log(req.user, "logging out");
 	req.logout();
 	if (req.user === null) {
+		res.json(null);
 		console.log("successfully logged out");
 	}
-	res.redirect("/");
 });
 
 app.get("/user", function (req, res) {
 	console.log(req.user);
 	if (req.isAuthenticated()) {
-		res.json({ email: req.user.email, authenticated: true });
+		res.json(req.user);
 	} else {
-		res.json({ authenticated: false });
+		res.json(null);
 	}
 });
 
